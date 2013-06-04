@@ -50,3 +50,65 @@ Started GET "/assets/ideas.js?body=1" for 127.0.0.1 at 2013-06-04 20:08:43 +1000
 
 
 Started GET "/assets/application.js?body=1" for 127.0.0.1 at 2013-06-04 20:08:43 +1000
+
+
+Started GET "/ideas" for 127.0.0.1 at 2013-06-04 20:31:09 +1000
+Processing by IdeasController#index as HTML
+  [1m[35mIdea Load (0.1ms)[0m  SELECT "ideas".* FROM "ideas"
+  Rendered ideas/index.html.erb within layouts/application (0.9ms)
+Completed 200 OK in 6ms (Views: 5.0ms | ActiveRecord: 0.1ms)
+
+
+Started GET "/assets/application.css?body=1" for 127.0.0.1 at 2013-06-04 20:31:09 +1000
+
+
+Started GET "/assets/turbolinks.js?body=1" for 127.0.0.1 at 2013-06-04 20:31:09 +1000
+
+
+Started GET "/assets/jquery.js?body=1" for 127.0.0.1 at 2013-06-04 20:31:09 +1000
+
+
+Started GET "/assets/scaffolds.css?body=1" for 127.0.0.1 at 2013-06-04 20:31:09 +1000
+
+
+Started GET "/assets/jquery_ujs.js?body=1" for 127.0.0.1 at 2013-06-04 20:31:09 +1000
+
+
+Started GET "/assets/ideas.css?body=1" for 127.0.0.1 at 2013-06-04 20:31:09 +1000
+
+
+Started GET "/assets/ideas.js?body=1" for 127.0.0.1 at 2013-06-04 20:31:09 +1000
+
+
+Started GET "/assets/application.js?body=1" for 127.0.0.1 at 2013-06-04 20:31:09 +1000
+
+
+Started GET "/ideas" for 127.0.0.1 at 2013-06-04 20:31:31 +1000
+Processing by IdeasController#index as HTML
+  [1m[36mIdea Load (0.2ms)[0m  [1mSELECT "ideas".* FROM "ideas"[0m
+  Rendered ideas/index.html.erb within layouts/application (1.0ms)
+Completed 200 OK in 18ms (Views: 17.4ms | ActiveRecord: 0.2ms)
+
+
+Started GET "/assets/ideas.css?body=1" for 127.0.0.1 at 2013-06-04 20:31:31 +1000
+
+
+Started GET "/assets/application.css?body=1" for 127.0.0.1 at 2013-06-04 20:31:31 +1000
+
+
+Started GET "/assets/scaffolds.css?body=1" for 127.0.0.1 at 2013-06-04 20:31:31 +1000
+
+
+Started GET "/assets/jquery_ujs.js?body=1" for 127.0.0.1 at 2013-06-04 20:31:31 +1000
+
+
+Started GET "/assets/turbolinks.js?body=1" for 127.0.0.1 at 2013-06-04 20:31:31 +1000
+
+
+Started GET "/assets/jquery.js?body=1" for 127.0.0.1 at 2013-06-04 20:31:31 +1000
+
+
+Started GET "/assets/ideas.js?body=1" for 127.0.0.1 at 2013-06-04 20:31:31 +1000
+
+
+Started GET "/assets/application.js?body=1" for 127.0.0.1 at 2013-06-04 20:31:31 +1000
