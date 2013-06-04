@@ -10,3 +10,43 @@ Started GET "/" for 127.0.0.1 at 2013-06-04 19:57:16 +1000
 Processing by Rails::WelcomeController#index as HTML
   Rendered /Users/Lucy/.rvm/gems/ruby-1.9.3-p429/gems/railties-4.0.0.rc1/lib/rails/templates/rails/welcome/index.html.erb (0.1ms)
 Completed 200 OK in 2ms (Views: 1.6ms | ActiveRecord: 0.0ms)
+  [1m[36m (1.4ms)[0m  [1mCREATE TABLE "schema_migrations" ("version" varchar(255) NOT NULL) [0m
+  [1m[35m (1.1ms)[0m  CREATE UNIQUE INDEX "unique_schema_migrations" ON "schema_migrations" ("version")
+  [1m[36mActiveRecord::SchemaMigration Load (0.1ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+Migrating to CreateIdeas (20130604100824)
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36m (0.4ms)[0m  [1mCREATE TABLE "ideas" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar(255), "description" text, "picture" varchar(255), "created_at" datetime, "updated_at" datetime) [0m
+  [1m[35mSQL (1.3ms)[0m  INSERT INTO "schema_migrations" ("version") VALUES (?)  [["version", "20130604100824"]]
+  [1m[36m (1.1ms)[0m  [1mcommit transaction[0m
+  [1m[35mActiveRecord::SchemaMigration Load (0.1ms)[0m  SELECT "schema_migrations".* FROM "schema_migrations"
+
+
+Started GET "/ideas" for 127.0.0.1 at 2013-06-04 20:08:42 +1000
+Processing by IdeasController#index as HTML
+  [1m[36mIdea Load (0.1ms)[0m  [1mSELECT "ideas".* FROM "ideas"[0m
+  Rendered ideas/index.html.erb within layouts/application (3.7ms)
+Completed 200 OK in 788ms (Views: 765.8ms | ActiveRecord: 0.3ms)
+
+
+Started GET "/assets/application.css?body=1" for 127.0.0.1 at 2013-06-04 20:08:43 +1000
+
+
+Started GET "/assets/ideas.css?body=1" for 127.0.0.1 at 2013-06-04 20:08:43 +1000
+
+
+Started GET "/assets/jquery.js?body=1" for 127.0.0.1 at 2013-06-04 20:08:43 +1000
+
+
+Started GET "/assets/jquery_ujs.js?body=1" for 127.0.0.1 at 2013-06-04 20:08:43 +1000
+
+
+Started GET "/assets/scaffolds.css?body=1" for 127.0.0.1 at 2013-06-04 20:08:43 +1000
+
+
+Started GET "/assets/turbolinks.js?body=1" for 127.0.0.1 at 2013-06-04 20:08:43 +1000
+
+
+Started GET "/assets/ideas.js?body=1" for 127.0.0.1 at 2013-06-04 20:08:43 +1000
+
+
+Started GET "/assets/application.js?body=1" for 127.0.0.1 at 2013-06-04 20:08:43 +1000
