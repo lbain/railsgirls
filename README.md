@@ -3,21 +3,17 @@
 
 Getting started with the Rails Girls App.  Walk through of steps found at http://guides.railsgirls.com/app/
 
-## Step 3: Design
-### HTML - HyperText Markup Language
-HTML is the language that browsers (Google Chrome, Firefox, Safari) use to display content. There are many "words" (tags) you can use and we'll cover some of them as we go. So far we've used:
+## Step 4: Adding picture uploads
+### Gems - libraries and open source
+A gem is a bundle of code someone wrote (generally not you, but it's great if you do!) that does a specific task without you having to worry abou it. Kind of like getting a taxi so you don't have to deal with driving.
 
-* `link` - connects assets to your page
-* `div` - a container for other content
-* `a` - links to another page
-* `ul` - unordered list, needs list elements to work
-* `li` - list element, must be part of a list
+### Uploader
+Hey, that `rails generate uploader Picture` looks a lot like that `raisl generate scaffold` command from step 2! Yep, sure does. Rails comes with a bunch of things it can do all by itself, we're just using a few of them. This command generates most of what you need to upload files. Keep in mind that you're uploading these files to *your* server, not to facebook, flickr, google docs or anywhere else.
 
-### ERB - Embedded Ruby
-Mixed in with our HTML is Ruby code. How does the server know what to execute as Ruby and what to serve up as HTML? There are a few ways to do this, but for our project (and many Rails projects) we use `<%= RUBY CODE HERE %>` to tell the server when we're using Ruby code. The server executes this code as **Ruby** code and then **embedds** it in the existing HTML.
-
-### CSS - Cascading Style Sheets
-CSS is what makes websites pretty. HTML keeps track of the *contents* on the page, CSS keeps track of how that page *looks*. We won't be working with CSS too much, but it can be pretty powerful.
+### Ruby to HTML
+Last time we talked a little about ERB, we're going to chat a bit about that here too. You added the lines `<%= f.file_field :picture %>` and `<%= image_tag(@idea.picture_url, :width => 600) if @idea.picture.present? %>`, both of these are lines of Ruby code (you can tell because of the `<%= %>` syntax), but both ended up being different HTML elements on the page (as you saw when the page rendered differently). The `file_field` became `<input id="idea_picture" name="idea[picture]" type="file">` and the `image_tag` became `<img alt="file name here" src="/uploads/idea/picture/1/file_name_here.png" width="600">`. These Ruby to HTML lines are something Rails gives you for free. So you don't always have to write out the full HTML (which can be slow and persnickety), you can often just use Ruby code.
 
 ### Resources
-[http://learn.shayhowe.com/html-css/](http://learn.shayhowe.com/html-css/)
+Check out a bunch of popular gems at [https://www.ruby-toolbox.com/](https://www.ruby-toolbox.com/)
+
+More on using Ruby code to make forms - [http://guides.rubyonrails.org/form_helpers.html](http://guides.rubyonrails.org/form_helpers.html)

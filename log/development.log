@@ -112,3 +112,131 @@ Started GET "/assets/ideas.js?body=1" for 127.0.0.1 at 2013-06-04 20:31:31 +1000
 
 
 Started GET "/assets/application.js?body=1" for 127.0.0.1 at 2013-06-04 20:31:31 +1000
+
+
+Started GET "/ideas" for 127.0.0.1 at 2013-06-04 20:50:47 +1000
+Processing by IdeasController#index as HTML
+Completed 500 Internal Server Error in 22ms
+
+NameError (uninitialized constant Idea::PictureUploader):
+  app/models/idea.rb:2:in `<class:Idea>'
+  app/models/idea.rb:1:in `<top (required)>'
+  app/controllers/ideas_controller.rb:7:in `index'
+
+
+  Rendered /Users/Lucy/.rvm/gems/ruby-1.9.3-p429/gems/actionpack-4.0.0.rc1/lib/action_dispatch/middleware/templates/rescues/_source.erb (0.7ms)
+  Rendered /Users/Lucy/.rvm/gems/ruby-1.9.3-p429/gems/actionpack-4.0.0.rc1/lib/action_dispatch/middleware/templates/rescues/_trace.erb (16.9ms)
+  Rendered /Users/Lucy/.rvm/gems/ruby-1.9.3-p429/gems/actionpack-4.0.0.rc1/lib/action_dispatch/middleware/templates/rescues/_request_and_response.erb (1.1ms)
+  Rendered /Users/Lucy/.rvm/gems/ruby-1.9.3-p429/gems/actionpack-4.0.0.rc1/lib/action_dispatch/middleware/templates/rescues/diagnostics.erb within rescues/layout (37.6ms)
+
+
+Started GET "/ideas" for 127.0.0.1 at 2013-06-04 20:51:02 +1000
+Processing by IdeasController#index as HTML
+  [1m[36mIdea Load (0.1ms)[0m  [1mSELECT "ideas".* FROM "ideas"[0m
+  Rendered ideas/index.html.erb within layouts/application (3.6ms)
+Completed 200 OK in 138ms (Views: 50.3ms | ActiveRecord: 0.3ms)
+
+
+Started GET "/assets/application.css?body=1" for 127.0.0.1 at 2013-06-04 20:51:03 +1000
+
+
+Started GET "/assets/ideas.css?body=1" for 127.0.0.1 at 2013-06-04 20:51:03 +1000
+
+
+Started GET "/assets/scaffolds.css?body=1" for 127.0.0.1 at 2013-06-04 20:51:03 +1000
+
+
+Started GET "/assets/jquery.js?body=1" for 127.0.0.1 at 2013-06-04 20:51:03 +1000
+
+
+Started GET "/assets/jquery_ujs.js?body=1" for 127.0.0.1 at 2013-06-04 20:51:03 +1000
+
+
+Started GET "/assets/turbolinks.js?body=1" for 127.0.0.1 at 2013-06-04 20:51:03 +1000
+
+
+Started GET "/assets/ideas.js?body=1" for 127.0.0.1 at 2013-06-04 20:51:03 +1000
+
+
+Started GET "/assets/application.js?body=1" for 127.0.0.1 at 2013-06-04 20:51:03 +1000
+
+
+Started GET "/ideas/new" for 127.0.0.1 at 2013-06-04 20:51:06 +1000
+Processing by IdeasController#new as HTML
+  Rendered ideas/_form.html.erb (75.1ms)
+  Rendered ideas/new.html.erb within layouts/application (81.4ms)
+Completed 200 OK in 87ms (Views: 85.6ms | ActiveRecord: 0.1ms)
+
+
+Started POST "/ideas" for 127.0.0.1 at 2013-06-04 20:51:24 +1000
+Processing by IdeasController#create as HTML
+  Parameters: {"utf8"=>"✓", "authenticity_token"=>"eT6aCSsleZ/+7MEmc5xsiJ1g9gwtj2ByeaNreEwu/PA=", "idea"=>{"name"=>"facebook should fix this", "description"=>"can auto detect", "picture"=>#<ActionDispatch::Http::UploadedFile:0x007f87640fe720 @tempfile=#<File:/var/folders/r0/3ttj83xs5ksgk5ns8gzqdz140000gq/T/RackMultipart20130604-1381-1hl3ocb>, @original_filename="Screen Shot 2013-06-04 at 9.21.58 AM.png", @content_type="image/png", @headers="Content-Disposition: form-data; name=\"idea[picture]\"; filename=\"Screen Shot 2013-06-04 at 9.21.58 AM.png\"\r\nContent-Type: image/png\r\n">}, "commit"=>"Create Idea"}
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36mSQL (5.0ms)[0m  [1mINSERT INTO "ideas" ("created_at", "description", "name", "picture", "updated_at") VALUES (?, ?, ?, ?, ?)[0m  [["created_at", Tue, 04 Jun 2013 10:51:24 UTC +00:00], ["description", "can auto detect"], ["name", "facebook should fix this"], ["picture", "Screen_Shot_2013-06-04_at_9.21.58_AM.png"], ["updated_at", Tue, 04 Jun 2013 10:51:24 UTC +00:00]]
+  [1m[35m (0.9ms)[0m  commit transaction
+Redirected to http://localhost:3000/ideas/1
+Completed 302 Found in 26ms (ActiveRecord: 6.0ms)
+
+
+Started GET "/ideas/1" for 127.0.0.1 at 2013-06-04 20:51:24 +1000
+Processing by IdeasController#show as HTML
+  Parameters: {"id"=>"1"}
+  [1m[36mIdea Load (0.3ms)[0m  [1mSELECT "ideas".* FROM "ideas" WHERE "ideas"."id" = ? LIMIT 1[0m  [["id", "1"]]
+  Rendered ideas/show.html.erb within layouts/application (3.0ms)
+Completed 200 OK in 12ms (Views: 9.1ms | ActiveRecord: 0.3ms)
+
+
+Started GET "/assets/application.css?body=1" for 127.0.0.1 at 2013-06-04 20:51:25 +1000
+
+
+Started GET "/assets/jquery.js?body=1" for 127.0.0.1 at 2013-06-04 20:51:25 +1000
+
+
+Started GET "/assets/turbolinks.js?body=1" for 127.0.0.1 at 2013-06-04 20:51:25 +1000
+
+
+Started GET "/assets/jquery_ujs.js?body=1" for 127.0.0.1 at 2013-06-04 20:51:25 +1000
+
+
+Started GET "/assets/application.js?body=1" for 127.0.0.1 at 2013-06-04 20:51:25 +1000
+
+
+Started GET "/assets/ideas.js?body=1" for 127.0.0.1 at 2013-06-04 20:51:25 +1000
+
+
+Started GET "/assets/scaffolds.css?body=1" for 127.0.0.1 at 2013-06-04 20:51:25 +1000
+
+
+Started GET "/assets/ideas.css?body=1" for 127.0.0.1 at 2013-06-04 20:51:25 +1000
+
+
+Started GET "/ideas/1" for 127.0.0.1 at 2013-06-04 20:52:21 +1000
+Processing by IdeasController#show as HTML
+  Parameters: {"id"=>"1"}
+  [1m[35mIdea Load (0.1ms)[0m  SELECT "ideas".* FROM "ideas" WHERE "ideas"."id" = ? LIMIT 1  [["id", "1"]]
+  Rendered ideas/show.html.erb within layouts/application (2.6ms)
+Completed 200 OK in 8ms (Views: 6.7ms | ActiveRecord: 0.1ms)
+
+
+Started GET "/assets/application.css?body=1" for 127.0.0.1 at 2013-06-04 20:52:21 +1000
+
+
+Started GET "/assets/ideas.css?body=1" for 127.0.0.1 at 2013-06-04 20:52:21 +1000
+
+
+Started GET "/assets/jquery_ujs.js?body=1" for 127.0.0.1 at 2013-06-04 20:52:21 +1000
+
+
+Started GET "/assets/scaffolds.css?body=1" for 127.0.0.1 at 2013-06-04 20:52:21 +1000
+
+
+Started GET "/assets/jquery.js?body=1" for 127.0.0.1 at 2013-06-04 20:52:21 +1000
+
+
+Started GET "/assets/turbolinks.js?body=1" for 127.0.0.1 at 2013-06-04 20:52:21 +1000
+
+
+Started GET "/assets/ideas.js?body=1" for 127.0.0.1 at 2013-06-04 20:52:21 +1000
+
+
+Started GET "/assets/application.js?body=1" for 127.0.0.1 at 2013-06-04 20:52:21 +1000
