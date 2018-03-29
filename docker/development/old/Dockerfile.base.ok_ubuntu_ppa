@@ -1,0 +1,53 @@
+FROM ubuntu:16.04
+# example: https://gist.github.com/zentetsukenz/5e330b801f983e3d39757686dcb41cc2
+
+# Set correct environment variables.
+ENV HOME /root
+
+ENV LANG pt_BR.UTF-8
+ENV LANGUAGE pt_BR
+ENV LC_CTYPE pt_BR.UTF-8
+ENV LC_ALL pt_BR.UTF-8
+
+#Para testes, update mais rápido. Tirar para produção.
+COPY docker/config/1604_etc_apt_sources.list /etc/apt/sources.list
+
+### Ubuntu
+RUN apt-get update \
+    && apt-get install -y vim curl locales wget xzdec dirmngr gnupg build-essential mysql-client \
+     libmysqlclient-dev nodejs imagemagick tzdata netcat software-properties-common \
+    && rm -rf /var/lib/apt/lists/* \
+    && localedef -i pt_BR -c -f UTF-8 -A /usr/share/locale/locale.alias pt_BR.UTF-8
+#### Ubuntu
+
+#### ruby
+RUN apt-add-repository ppa:brightbox/ruby-ng \
+    && apt-get update \
+    && apt-get install -y ruby2.2 ruby2.2-dev ruby-switch \
+    && ruby-switch --set ruby2.2 \
+    && gem install bundler
+#### ruby
+
+ARG rails_version=4.2.7.1
+ARG ruby_version=ruby-2.2.10
+ENV RAILS_VERSION ${rails_version}
+ENV RUBY_VERSION ${ruby_version}
+
+ARG rails_env=development
+ENV RAILS_ENV ${rails_env}
+
+ENV APP_HOME /home/app
+ENV APP_NAME repo
+ENV APP_DIR "${APP_HOME}/${APP_NAME}"
+
+RUN chsh -s /bin/bash \
+    && bash -c "mkdir -p ${APP_DIR}"
+
+WORKDIR ${APP_DIR}
+
+COPY Gemfile* ${APP_DIR}/
+
+RUN /bin/bash -l -c 'RAILS_ENV=${RAILS_ENV} bundle config --global jobs "$(($(getconf _NPROCESSORS_ONLN)*2))"' && \
+    /bin/bash -l -c 'RAILS_ENV=${RAILS_ENV} bundle install'
+
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*

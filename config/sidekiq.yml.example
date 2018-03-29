@@ -1,0 +1,23 @@
+# to run on development environment
+#
+# bundle exec sidekiq -C config/sidekiq.yml -L log/sidekiq.log
+#
+# if logfile is set in this file, then the -L parameter does not need to be declared on commandline
+# bundle exec sidekiq -C config/sidekiq.yml
+
+#:pidfile: ./tmp/pids/sidekiq.pid
+
+#  logfile can be used to set log file location instead of sending as sidekiq parameter
+:logfile: ./log/sidekiq.log
+
+:queues:
+  - default
+
+development:
+  :concurrency: 5
+  # log_level: 0 to 5 = :debug, :info, :warn, :error, :fatal, and :unknown
+#  :log_level: 0
+staging:
+  :concurrency: 25
+production:
+  :concurrency: 25

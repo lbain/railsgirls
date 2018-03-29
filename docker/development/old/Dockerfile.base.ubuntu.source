@@ -1,0 +1,117 @@
+FROM ubuntu:16.04
+# example: https://gist.github.com/zentetsukenz/5e330b801f983e3d39757686dcb41cc2
+
+# Set correct environment variables.
+ENV HOME /root
+
+ENV LANG pt_BR.UTF-8
+ENV LANGUAGE pt_BR
+ENV LC_CTYPE pt_BR.UTF-8
+ENV LC_ALL pt_BR.UTF-8
+
+#Para testes, update mais rápido. Tirar para produção.
+COPY docker/config/1604_etc_apt_sources.list /etc/apt/sources.list
+
+#    && apt-get install -y vim curl language-pack-pt locales wget xzdec \
+#RUN apt-get update \
+#### Ubuntu
+#    && apt-get install -y vim curl locales wget xzdec \
+#    && rm -rf /var/lib/apt/lists/* \
+#    && localedef -i pt_BR -c -f UTF-8 -A /usr/share/locale/locale.alias pt_BR.UTF-8 \
+#    && apt-get update
+
+RUN apt-get update
+#### Ubuntu
+RUN apt-get install -y vim curl locales wget xzdec
+RUN rm -rf /var/lib/apt/lists/*
+RUN localedef -i pt_BR -c -f UTF-8 -A /usr/share/locale/locale.alias pt_BR.UTF-8
+RUN apt-get update
+
+#### Ubuntu
+RUN apt-get install -y dirmngr gnupg build-essential mysql-client \
+    libmysqlclient-dev nodejs imagemagick tzdata netcat
+
+RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
+RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
+RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
+
+RUN apt-get update
+RUN apt-get install -y git-core curl zlib1g-dev build-essential libssl-dev \
+libreadline-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev libxslt1-dev \
+libcurl4-openssl-dev software-properties-common libffi-dev nodejs yarn
+
+#### Ubuntu
+RUN set -ex \
+	\
+	&& buildDeps=' \
+		bison \
+		dpkg-dev \
+		libgdbm-dev \
+		ruby \
+	' \
+	&& apt-get update \
+	&& apt-get install -y --no-install-recommends $buildDeps
+
+		# ruby 2.3 on stretch can only support libssl1.0-dev (libssl dev from buildpack-deps is 1.1.x)
+#		libssl1.0-dev \
+#### ruby
+RUN wget http://ftp.ruby-lang.org/pub/ruby/2.2/ruby-2.2.10.tar.gz \
+    && tar -xzvf ruby-2.2.10.tar.gz \
+    && cd ruby-2.2.10/ \
+    && ./configure
+RUN cd ruby-2.2.10/ && make
+RUN cd ruby-2.2.10/ && make install
+RUN cd ruby-2.2.10/ && ruby -v
+#### ruby
+#    && gem install bundler \
+
+ARG rails_version=4.2.7.1
+ARG ruby_version=ruby-2.2.10
+ENV RAILS_VERSION ${rails_version}
+ENV RUBY_VERSION ${ruby_version}
+
+ARG rails_env=development
+ENV RAILS_ENV ${rails_env}
+
+ENV APP_HOME /home/app
+ENV APP_NAME repo
+ENV APP_DIR "${APP_HOME}/${APP_NAME}"
+
+RUN chsh -s /bin/bash
+RUN bash -c "mkdir -p ${APP_DIR}"
+
+WORKDIR /root
+
+# install things globally, for great justice
+# and don't create ".bundle" in all our apps
+ENV GEM_HOME /usr/local/bin/bundle
+ENV BUNDLE_PATH="$GEM_HOME" \
+	BUNDLE_SILENCE_ROOT_WARNING=1 \
+	BUNDLE_APP_CONFIG="$GEM_HOME"
+# path recommendation: https://github.com/bundler/bundler/pull/6469#issuecomment-383235438
+ENV PATH $GEM_HOME/bin:$BUNDLE_PATH/gems/bin:$PATH
+# adjust permissions of a few directories for running "gem install" as an arbitrary user
+RUN mkdir -p "$GEM_HOME" && chmod 777 "$GEM_HOME"
+# (BUNDLE_PATH = GEM_HOME, no need to mkdir/chown both)
+
+#RUN /bin/bash -l -c "gem update --system 2.7.7"
+RUN /bin/bash -l -c "gem install bundler"
+
+WORKDIR ${APP_DIR}
+
+COPY Gemfile* ${APP_DIR}/
+COPY .ruby* ${APP_DIR}/
+
+RUN /bin/bash -l -c 'RAILS_ENV=${RAILS_ENV} bundle config --global jobs "$(($(getconf _NPROCESSORS_ONLN)*2))"' && \
+    /bin/bash -l -c 'RAILS_ENV=${RAILS_ENV} bundle install'
+
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+
+#RUN /bin/bash -l -c "source /etc/profile.d/rvm.sh"
+#SHELL ["/bin/bash", "-l", "-c"]
+#RUN source /etc/profile.d/rvm.sh
+#COPY docker/init_dev_base.sh ${APP_DIR}/
+
+#CMD ["/bin/bash -l"]
+#ENTRYPOINT [ "/bin/bash", "-l" ]

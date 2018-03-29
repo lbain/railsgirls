@@ -1,0 +1,51 @@
+sudo: required
+
+language: ruby
+
+cache:
+  bundler: true
+#  directories:
+#     - /home/travis/.rvm/
+
+env:
+  - DOCKER_COMPOSE_VERSION=1.21.2
+
+addons:
+  apt:
+    packages:
+      - docker-ce
+
+services:
+  - mysql
+
+before_install:
+  - sudo rm /usr/local/bin/docker-compose
+  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+  - chmod +x docker-compose
+  - sudo mv docker-compose /usr/local/bin
+
+script:
+  - export HOME_DIR=$(pwd)
+  - cd $HOME_DIR/docker
+  - docker-compose -f docker-compose.yml build ruby_base
+  - docker-compose -f docker-compose.yml build web
+  - docker-compose -f docker-compose.yml up -d web worker
+#  - docker exec -it docker_web_1 /bin/bash -c "cd docker && ./init_dev.sh"
+  - cd $HOME_DIR
+  - docker ps -a
+#  - docker exec -it docker_web_1 /bin/bash -c "RAILS_ENV=test bundle exec rake test:all"
+
+#  - docker ps -a
+#  - docker exec -it docker_web_1 /bin/bash -c "RAILS_ENV=test bundle install"
+#  - docker exec -it docker_web_1 /bin/bash -c "RAILS_ENV=test bundle exec rake test:all"
+#
+#script:
+  - RAILS_ENV=test bundle install
+  - RAILS_ENV=test bundle exec rake db:create db:migrate --trace
+#  - bundle exec rspec test/
+  - RAILS_ENV=test bundle exec rake test:all
+
+before_script:
+  - cp docker/.env.travis docker/.env
+  - cp config/database.yml.travis config/database.yml
+#  - mysql -e 'create database mydb_test'

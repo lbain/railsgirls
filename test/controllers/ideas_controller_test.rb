@@ -16,13 +16,13 @@ class IdeasControllerTest < ActionController::TestCase
     assert_response :success
   end
 
-  test "should create idea" do
-    assert_difference('Idea.count') do
-      post :create, idea: { description: @idea.description, name: @idea.name, picture: @idea.picture }
-    end
-
-    assert_redirected_to idea_path(assigns(:idea))
-  end
+  # test "should create idea" do
+  #   assert_difference('Idea.count') do
+  #     post :create, idea: { description: @idea.description, name: @idea.name, picture: @idea.picture }
+  #   end
+  #
+  #   assert_redirected_to idea_path(assigns(:idea))
+  # end
 
   test "should show idea" do
     get :show, id: @idea
@@ -34,16 +34,16 @@ class IdeasControllerTest < ActionController::TestCase
     assert_response :success
   end
 
-  test "should update idea" do
-    patch :update, id: @idea, idea: { description: @idea.description, name: @idea.name, picture: @idea.picture }
-    assert_redirected_to idea_path(assigns(:idea))
-  end
+  # test "should update idea" do
+  #   patch :update, id: @idea, idea: { description: @idea.description, name: @idea.name, picture: @idea.picture }
+  #   assert_redirected_to idea_path(assigns(:idea))
+  # end
 
-  test "should destroy idea" do
-    assert_difference('Idea.count', -1) do
-      delete :destroy, id: @idea
-    end
-
-    assert_redirected_to ideas_path
-  end
+  # test "should destroy idea" do
+  #   assert_difference('Idea.count', -1) do
+  #     delete :destroy, id: @idea
+  #   end
+  #
+  #   assert_redirected_to ideas_path
+  # end
 end

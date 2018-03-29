@@ -1,0 +1,72 @@
+ARG RUBY_VERSION="2.2"
+#FROM ruby:${RUBY_VERSION}-alpine3.7
+ARG ENV="production"
+
+FROM ubuntu:16.04
+# example: https://gist.github.com/zentetsukenz/5e330b801f983e3d39757686dcb41cc2
+
+# Set correct environment variables.
+ENV LANG pt_BR.UTF-8
+ENV LANGUAGE pt_BR
+ENV LC_CTYPE pt_BR.UTF-8
+ENV LC_ALL pt_BR.UTF-8
+
+#Para testes, update mais rápido. Tirar para produção.
+COPY docker/config/1604_etc_apt_sources.list /etc/apt/sources.list
+
+### Ubuntu
+RUN apt-get update \
+    && apt-get install -y vim curl locales wget xzdec dirmngr gnupg build-essential mysql-client \
+     libmysqlclient-dev nodejs imagemagick tzdata netcat software-properties-common \
+    && rm -rf /var/lib/apt/lists/* \
+    && localedef -i pt_BR -c -f UTF-8 -A /usr/share/locale/locale.alias pt_BR.UTF-8
+#### Ubuntu
+
+ENV APP_HOME /home/app
+ENV APP_NAME repo
+ENV APP_DIR "${APP_HOME}/${APP_NAME}"
+
+ENV REPO_DIR "${APP_DIR}"
+ENV GEM_HOME="${REPO_DIR}/vendor/bundle" \
+    GEM_PATH="${REPO_DIR}/vendor/bundle"
+ENV BUNDLE_PATH="$GEM_HOME" \
+	  BUNDLE_SILENCE_ROOT_WARNING=1 \
+	  BUNDLE_APP_CONFIG="$GEM_HOME"
+ENV PATH $GEM_HOME/bin:$BUNDLE_PATH/gems/bin:$PATH
+
+RUN mkdir -p $REPO_DIR $GEM_HOME && chmod 777 $GEM_HOME
+
+# Define versão do Rails e variáveis de ambiente
+ENV RAILS_VERSION="4.2.7.1"
+ENV RAILS_ENV=${ENV}
+ENV RACK_PORT=3000
+ENV TZ=America/Sao_Paulo
+
+COPY . ${REPO_DIR}/
+
+# Instala gems ao instanciar o contâiner
+WORKDIR $REPO_DIR
+
+#### ruby
+RUN apt-add-repository ppa:brightbox/ruby-ng \
+    && apt-get update \
+    && apt-get install -y ruby2.2 ruby2.2-dev ruby-switch \
+    && ruby-switch --set ruby2.2
+
+RUN mkdir -p ${APP_DIR}/public/uploads && \
+    mkdir -p ${APP_DIR}/log && \
+    mkdir ${APP_DIR}/shared && \
+    ln -s ${APP_DIR}/log ${APP_DIR}/shared/. && \
+    ln -s ${APP_DIR}/public/uploads ${APP_DIR}/shared/. && \
+    ln -s ${GEM_PATH} ${APP_DIR}/shared/.
+
+VOLUME [ "${APP_DIR}/shared/log"]
+VOLUME [ "${APP_DIR}/shared/uploads"]
+VOLUME [ "${APP_DIR}/shared/bundle"]
+
+RUN /bin/bash -l -c 'RAILS_ENV=${RAILS_ENV} gem install --no-rdoc --no-ri bundler rake' && \
+    /bin/bash -l -c 'RAILS_ENV=${RAILS_ENV} bundle config --global jobs "$(($(getconf _NPROCESSORS_ONLN)*2))"' && \
+    /bin/bash -l -c 'RAILS_ENV=${RAILS_ENV} bundle config --global retry 2' && \
+    /bin/bash -l -c 'RAILS_ENV=${RAILS_ENV} bundle check' || /bin/bash -l -c 'RAILS_ENV=${RAILS_ENV} bundle install'
+
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
