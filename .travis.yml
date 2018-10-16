@@ -30,22 +30,12 @@ script:
   - docker-compose -f docker-compose.yml build ruby_base
   - docker-compose -f docker-compose.yml build web
   - docker-compose -f docker-compose.yml up -d web worker
-#  - docker exec -it docker_web_1 /bin/bash -c "cd docker && ./init_dev.sh"
   - cd $HOME_DIR
   - docker ps -a
-#  - docker exec -it docker_web_1 /bin/bash -c "RAILS_ENV=test bundle exec rake test:all"
-
-#  - docker ps -a
-#  - docker exec -it docker_web_1 /bin/bash -c "RAILS_ENV=test bundle install"
-#  - docker exec -it docker_web_1 /bin/bash -c "RAILS_ENV=test bundle exec rake test:all"
-#
-#script:
   - RAILS_ENV=test bundle install
   - RAILS_ENV=test bundle exec rake db:create db:migrate --trace
-#  - bundle exec rspec test/
   - RAILS_ENV=test bundle exec rake test:all
 
 before_script:
   - cp docker/.env.travis docker/.env
   - cp config/database.yml.travis config/database.yml
-#  - mysql -e 'create database mydb_test'
