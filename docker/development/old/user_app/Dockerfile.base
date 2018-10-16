@@ -1,0 +1,98 @@
+FROM ubuntu:16.04
+# example: https://gist.github.com/zentetsukenz/5e330b801f983e3d39757686dcb41cc2
+
+# Set correct environment variables.
+ENV HOME /root
+
+ENV LANG pt_BR.UTF-8
+ENV LANGUAGE pt_BR
+ENV LC_CTYPE pt_BR.UTF-8
+ENV LC_ALL pt_BR.UTF-8
+
+COPY docker/config/1604_etc_apt_sources.list /etc/apt/sources.list
+
+RUN apt-get update \
+### Ubuntu
+    && apt-get install -y vim curl language-pack-pt locales wget xzdec \
+    && rm -rf /var/lib/apt/lists/* \
+    && localedef -i pt_BR -c -f UTF-8 -A /usr/share/locale/locale.alias pt_BR.UTF-8 \
+    && apt-get update
+
+#### Ubuntu
+RUN apt-get install -y dirmngr gnupg build-essential mysql-client \
+    libmysqlclient-dev nodejs imagemagick tzdata netcat
+#### Ubuntu
+
+#### Include user app
+RUN addgroup --gid 9999 app \
+    && useradd -c 'Application' -u 9999 -g 9999 -d /home/app -G sudo -s /bin/bash -m app \
+    && usermod -L app \
+    && mkdir -p /home/app/.ssh \
+    && chmod 700 /home/app/.ssh \
+    && chown app:app /home/app/.ssh
+
+ARG rails_version=4.2.7.1
+ARG ruby_version=ruby-2.2.10
+ENV RAILS_VERSION ${rails_version}
+ENV RUBY_VERSION ${ruby_version}
+
+ARG rails_env=development
+ENV RAILS_ENV ${rails_env}
+
+ENV HOME /home/app
+ENV APP_NAME repo
+ENV APP_DIR "${HOME}/${APP_NAME}"
+
+RUN bash -c "mkdir -p ${APP_DIR}"
+
+USER app
+
+WORKDIR ${APP_DIR}
+
+#VOLUME ['${APP_DIR}/public/uploads']
+### app
+
+### COPY repository
+#COPY --chown=app:app . .
+
+### COPY repository
+COPY --chown=app:app Gemfile* ${APP_DIR}/
+
+#RUN cp /run/secrets/database.yml ${APP_DIR}/config/.
+#COPY docker/config/staging/app_config.yml.erb ${APP_DIR}/config/
+#COPY --chown=app:app docker/config/staging/database.yml ${APP_DIR}/config/
+#COPY --chown=app:app docker/config/database.yml ${APP_DIR}/config/
+#COPY docker/config/staging/database.yml.erb ${APP_DIR}/config/
+#COPY image/staging/email.yml ${APP_DIR}/config/
+#COPY image/staging/secrets.yml ${APP_DIR}/config/
+
+WORKDIR ${HOME}
+RUN curl -sSL https://rvm.io/mpapis.asc | gpg --import - && \
+    curl -L https://get.rvm.io | /bin/bash -s stable
+
+USER root
+RUN chown app:app -R ${APP_DIR} && \
+    echo "source ${HOME}/.rvm/scripts/rvm" >> ${HOME}/.bashrc && \
+    /bin/bash -l -c "rvm requirements";
+
+USER app
+
+
+RUN /bin/bash -l -c "rvm install ${RUBY_VERSION} --auto-dotfiles" && \
+    /bin/bash -l -c "rvm use --default ${RUBY_VERSION}"
+
+
+WORKDIR ${APP_DIR}
+
+RUN echo "${APP_NAME}" > .ruby-gemset
+
+RUN /bin/bash -l -c "rvm use ${RUBY_VERSION}@$APP_NAME --create" && \
+    /bin/bash -l -c "gem install bundler" && \
+    /bin/bash -l -c 'RAILS_ENV=${RAILS_ENV} bundle config --global jobs "$(($(getconf _NPROCESSORS_ONLN)*2))"' && \
+    /bin/bash -l -c 'RAILS_ENV=${RAILS_ENV} bundle install'
+
+USER root
+
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+

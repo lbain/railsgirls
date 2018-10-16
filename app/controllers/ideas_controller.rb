@@ -24,6 +24,10 @@ class IdeasController < ApplicationController
   # POST /ideas
   # POST /ideas.json
   def create
+    20.times do |index|
+      MyWorker.perform_in(index, "Insert", index)
+    end
+
     @idea = Idea.new(idea_params)
 
     respond_to do |format|
@@ -40,6 +44,10 @@ class IdeasController < ApplicationController
   # PATCH/PUT /ideas/1
   # PATCH/PUT /ideas/1.json
   def update
+    20.times do |index|
+      MyWorker.perform_in(index, "Update", index)
+    end
+
     respond_to do |format|
       if @idea.update(idea_params)
         format.html { redirect_to @idea, notice: 'Idea was successfully updated.' }
@@ -54,6 +62,10 @@ class IdeasController < ApplicationController
   # DELETE /ideas/1
   # DELETE /ideas/1.json
   def destroy
+    20.times do |index|
+      MyWorker.perform_in(index, "Delete", index)
+    end
+
     @idea.destroy
     respond_to do |format|
       format.html { redirect_to ideas_url }

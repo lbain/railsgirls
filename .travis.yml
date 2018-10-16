@@ -1,0 +1,41 @@
+sudo: required
+
+language: ruby
+
+cache:
+  bundler: true
+#  directories:
+#     - /home/travis/.rvm/
+
+env:
+  - DOCKER_COMPOSE_VERSION=1.21.2
+
+addons:
+  apt:
+    packages:
+      - docker-ce
+
+services:
+  - mysql
+
+before_install:
+  - sudo rm /usr/local/bin/docker-compose
+  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+  - chmod +x docker-compose
+  - sudo mv docker-compose /usr/local/bin
+
+script:
+  - export HOME_DIR=$(pwd)
+  - cd $HOME_DIR/docker
+  - docker-compose -f docker-compose.yml build ruby_base
+  - docker-compose -f docker-compose.yml build web
+  - docker-compose -f docker-compose.yml up -d web worker
+  - cd $HOME_DIR
+  - docker ps -a
+  - RAILS_ENV=test bundle install
+  - RAILS_ENV=test bundle exec rake db:create db:migrate --trace
+  - RAILS_ENV=test bundle exec rake test:all
+
+before_script:
+  - cp docker/.env.travis docker/.env
+  - cp config/database.yml.travis config/database.yml

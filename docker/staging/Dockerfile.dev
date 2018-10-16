@@ -1,0 +1,37 @@
+FROM robertosilvino/railsgirls-dev-base:latest
+
+ARG rails_version=4.2.7.1
+ENV RAILS_VERSION ${rails_version}
+
+ARG rails_env=development
+ENV RAILS_ENV ${rails_env}
+
+ENV APP_HOME /home/app
+ENV APP_NAME repo
+ENV APP_DIR "${APP_HOME}/${APP_NAME}"
+
+#SHELL [ "/bin/bash", "-l", "-c"]
+
+#RUN /bin/bash -l -c "mkdir -p ${APP_DIR}"
+RUN mkdir -p ${APP_DIR}
+
+WORKDIR ${APP_DIR}
+
+RUN mkdir -p ${APP_DIR}/public/uploads && \
+    mkdir -p ${APP_DIR}/log
+
+RUN mkdir ${APP_DIR}/shared && \
+    ln -s ${APP_DIR}/log ${APP_DIR}/shared/. && \
+    ln -s ${APP_DIR}/public/uploads ${APP_DIR}/shared/.
+
+VOLUME [ "${APP_DIR}/shared/log"]
+VOLUME [ "${APP_DIR}/shared/uploads"]
+
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# Expose Nginx HTTP service
+#EXPOSE 80
+EXPOSE 3000
+
+#ENTRYPOINT [ "/bin/bash", "-l", "-c" ]
+#CMD [ "docker/init_dev.sh" ]

@@ -1,0 +1,15 @@
+language: ruby
+cache:
+  bundler: true
+#  directories:
+#     - /home/travis/.rvm/
+rvm:
+- 2.2
+
+stages:
+  - build
+  - test
+  - deploy
+
+script:
+- RAILS_ENV=test bundle exec rake test:all

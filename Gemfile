@@ -1,10 +1,11 @@
 source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '4.0.0.rc1'
+gem 'rails', '4.2.7.1'
 
+gem 'mysql2', '~> 0.3.18'
 # Use sqlite3 as the database for Active Record
-gem 'sqlite3'
+# gem 'sqlite3'
 
 gem 'carrierwave'
 
@@ -42,6 +43,25 @@ end
 
 # Use Capistrano for deployment
 # gem 'capistrano', group: :development
+gem 'tzinfo-data'
+gem 'tzinfo'
+
+group :production do
+  gem 'passenger'
+  gem 'execjs'
+end
+
+group :development do
+  gem 'thin'
+
+  # docker compose debug
+  gem 'ruby-debug-ide'
+  gem 'debase'
+end
+gem 'dalli'
+
+gem 'sidekiq', '~> 4.0'
+gem 'sinatra', require: nil
 
 # Use debugger
 # gem 'debugger', group: [:development, :test]

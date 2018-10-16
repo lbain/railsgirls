@@ -1,5 +1,6 @@
 # railsgirls
 
+[![Build Status](https://travis-ci.org/robertosilvino/railsgirls.svg?branch=docker-test)](https://travis-ci.org/robertosilvino/railsgirls) [![Maintainability](https://api.codeclimate.com/v1/badges/8e0f39d2b63482fb1ce7/maintainability)](https://codeclimate.com/github/robertosilvino/railsgirls/maintainability)
 
 Getting started with the Rails Girls App.  Walk through of steps found at http://guides.railsgirls.com/app/
 

@@ -13,10 +13,10 @@
 
 ActiveRecord::Schema.define(version: 20130604100824) do
 
-  create_table "ideas", force: true do |t|
-    t.string   "name"
-    t.text     "description"
-    t.string   "picture"
+  create_table "ideas", force: :cascade do |t|
+    t.string   "name",        limit: 255
+    t.text     "description", limit: 65535
+    t.string   "picture",     limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
   end

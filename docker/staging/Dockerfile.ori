@@ -1,0 +1,125 @@
+FROM phusion/passenger-ruby22
+#FROM robertosilvino/railsgirls-dev-base:latest
+
+# example: https://gist.github.com/zentetsukenz/5e330b801f983e3d39757686dcb41cc2
+
+# Set correct environment variables.
+ENV HOME /root
+
+# Use baseimage-docker's init process.
+CMD ["/sbin/my_init"]
+
+# Expose Nginx HTTP service
+EXPOSE 80
+#EXPOSE 80 3001
+
+# Start Nginx / Passenger
+RUN rm -f /etc/service/nginx/down
+
+# Remove the default site
+RUN rm /etc/nginx/sites-enabled/default
+
+# Nginx App setup
+COPY docker/staging/config/app.nginx.conf /etc/nginx/sites-enabled/app.nginx.conf
+COPY docker/config/etc_nginx_main.d_default.conf /etc/nginx/main.d/default.conf
+
+ENV LANG pt_BR.UTF-8
+ENV LANGUAGE pt_BR
+ENV LC_CTYPE pt_BR.UTF-8
+ENV LC_ALL pt_BR.UTF-8
+
+COPY docker/config/1604_etc_apt_sources.list /etc/apt/sources.list
+
+RUN apt-get update \
+### Ubuntu
+    && apt-get install -y vim curl language-pack-pt locales wget xzdec \
+    && rm -rf /var/lib/apt/lists/* \
+    && localedef -i pt_BR -c -f UTF-8 -A /usr/share/locale/locale.alias pt_BR.UTF-8 \
+    && apt-get update
+
+#### Ubuntu
+RUN apt-get install -y dirmngr gnupg build-essential mysql-client \
+    libmysqlclient-dev nodejs imagemagick tzdata netcat
+#### Ubuntu
+
+ARG rails_version=4.2.7.1
+ENV RAILS_VERSION ${rails_version}
+
+ARG rails_env=production
+ENV RAILS_ENV ${rails_env}
+#ENV APP_BRANCH TCC_2_6_2
+ENV APP_BRANCH docker-test
+
+ENV APP_DIR '/home/app/railsgirls'
+
+COPY docker/config/etc_nginx_passenger.conf /etc/nginx/passenger.conf
+
+RUN bash -c 'mkdir -p ${APP_DIR}'
+
+USER app
+
+ENV HOME /home/app
+
+WORKDIR ${APP_DIR}
+
+#VOLUME ["${APP_DIR}/public/uploads"]
+### app
+
+### GIT
+#ARG git_repo="https://github.com/robertosilvino/railsgirls.git"
+# git clone https://github.com/robertosilvino/railsgirls.git ${APP_DIR} -b ${APP_BRANCH} --recursive
+
+#git clone https://github.com/UFSC/moodle-tcc.git ${APP_DIR} -b ${APP_BRANCH} --recursive
+#RUN git clone ${git_repo} ${APP_DIR} -b ${APP_BRANCH} --recursive
+
+### COPY repository
+#COPY . ${APP_DIR}
+COPY . .
+
+#RUN cp /run/secrets/database.yml ${APP_DIR}/config/.
+#COPY docker/config/staging/app_config.yml.erb ${APP_DIR}/config/
+#COPY --chown=app:app docker/config/staging/database.yml ${APP_DIR}/config/
+COPY docker/config/database.yml ${APP_DIR}/config/
+#COPY docker/config/staging/database.yml.erb ${APP_DIR}/config/
+#COPY image/staging/email.yml ${APP_DIR}/config/
+#COPY image/staging/secrets.yml ${APP_DIR}/config/
+
+USER root
+RUN chown app:app -R ${APP_DIR}
+USER app
+
+### Development
+# RUN apt-get install -y libcurl4-openssl-dev
+# RUN RAILS_ENV=${RAILS_ENV} bundle install --without production --with test development
+
+### Production
+RUN RAILS_ENV=${RAILS_ENV} bundle config --global jobs "$(($(getconf _NPROCESSORS_ONLN)*2))"
+RUN RAILS_ENV=${RAILS_ENV} bundle config --local BUNDLE_WIITHOUT "development:test" \
+    && RAILS_ENV=${RAILS_ENV} bundle config --local BUNDLE_PATH: "${APP_DIR}/bundle" \
+    && RAILS_ENV=${RAILS_ENV} bundle config --local BUNDLE_DISABLE_SHARED_GEMS: "true" \
+    && RAILS_ENV=${RAILS_ENV} bundle config --local BUNDLE_FROZEN: "true"
+RUN RAILS_ENV=${RAILS_ENV} bundle install --without test development --with production
+RUN RAILS_ENV=${RAILS_ENV} bundle exec rake assets:clobber
+RUN RAILS_ENV=${RAILS_ENV} bundle exec rake tmp:clear
+RUN RAILS_ENV=${RAILS_ENV} bundle exec rake assets:precompile
+
+USER root
+## sidekiq
+
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+CMD [ "docker/start_passenger.sh" ]
+#/run/secrets/paginas_nnn
+#fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+#fastcgi_param APPLICATION_ENV development;
+
+  #location ~ \.php$ {
+  #     try_files $uri =404;
+  #     fastcgi_split_path_info ^(.+\.php)(/.+)$;
+  #     include fastcgi_params;
+  #     fastcgi_index index.php;
+  #     fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+  #     include /run/secrets/paginas_*;
+  #     fastcgi_read_timeout 60s;
+  #     fastcgi_pass php;
+  #}
